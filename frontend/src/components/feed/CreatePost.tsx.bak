@@ -1,0 +1,138 @@
+"use client";
+
+import { useState } from "react";
+import type { Post } from "./PostCard";
+
+const MAX_CHARS = 500;
+
+function detectMediaType(url: string): "image" | "video" | null {
+  const lower = url.toLowerCase().split("?")[0];
+  if (/\.(jpg|jpeg|png|gif|webp|avif|svg)$/.test(lower)) return "image";
+  if (/\.(mp4|webm|mov|avi|mkv)$/.test(lower)) return "video";
+  return null;
+}
+
+export default function CreatePost({
+  onCreated,
+  alterEgoActive,
+  alterEgoAlias,
+}: {
+  onCreated: (post: Post) => void;
+  alterEgoActive: boolean;
+  alterEgoAlias: string | null;
+}) {
+  const [content, setContent] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [showMedia, setShowMedia] = useState(false);
+  const [postAsAlterEgo, setPostAsAlterEgo] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!content.trim()) return;
+    setSubmitting(true);
+    setError(null);
+
+    const trimmedUrl = mediaUrl.trim();
+    const media_type = trimmedUrl ? detectMediaType(trimmedUrl) : null;
+
+    try {
+      const res = await fetch("/api/v1/feed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          content,
+          post_as_alter_ego: postAsAlterEgo,
+          media_url: trimmedUrl || null,
+          media_type: media_type ?? (trimmedUrl ? "image" : null),
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) { setError(d.detail ?? "Failed to post"); return; }
+      onCreated(d as Post);
+      setContent("");
+      setMediaUrl("");
+      setShowMedia(false);
+      setPostAsAlterEgo(false);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const remaining = MAX_CHARS - content.length;
+
+  return (
+    <form onSubmit={submit} className="glass-card p-5 flex flex-col gap-3">
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value.slice(0, MAX_CHARS))}
+        placeholder="What's moving the market today?"
+        rows={3}
+        className="w-full bg-surface-raised border border-border rounded-lg px-4 py-3 text-sm
+                   text-text-primary placeholder-text-muted focus:outline-none focus:border-accent
+                   transition-colors resize-none"
+      />
+
+      {showMedia && (
+        <input
+          type="url"
+          value={mediaUrl}
+          onChange={(e) => setMediaUrl(e.target.value)}
+          placeholder="Paste image or video URL (optional)"
+          className="w-full bg-surface-raised border border-border rounded-lg px-4 py-2.5 text-sm
+                     text-text-primary placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+        />
+      )}
+
+      {/* Media preview */}
+      {showMedia && mediaUrl.trim() && detectMediaType(mediaUrl.trim()) === "image" && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={mediaUrl.trim()} alt="preview" className="rounded-lg max-h-40 object-cover border border-border/50" onError={() => {}} />
+      )}
+
+      {error && (
+        <p className="text-xs text-danger">{error}</p>
+      )}
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowMedia((v) => !v)}
+            className={`text-xs transition-colors ${showMedia ? "text-accent" : "text-text-muted hover:text-text-primary"}`}
+            title="Attach media"
+          >
+            📎
+          </button>
+
+          {alterEgoActive && alterEgoAlias && (
+            <label className="flex items-center gap-2 text-xs text-text-muted cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={postAsAlterEgo}
+                onChange={(e) => setPostAsAlterEgo(e.target.checked)}
+                className="accent-violet-500"
+              />
+              Post as <span className="clout-badge">@{alterEgoAlias}</span>
+            </label>
+          )}
+          <span
+            className={`text-xs font-mono ${remaining < 50 ? "text-danger" : "text-text-muted"}`}
+          >
+            {remaining}
+          </span>
+        </div>
+        <button
+          type="submit"
+          disabled={submitting || !content.trim()}
+          className="px-4 py-1.5 bg-accent text-background text-xs font-semibold rounded-lg
+                     hover:bg-accent-hover transition-colors disabled:opacity-40"
+        >
+          {submitting ? "Posting…" : "Post"}
+        </button>
+      </div>
+    </form>
+  );
+}

@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: dark; }
+
+  * {
+    @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: #262626 transparent;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #262626; border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #363636; }
+
+  ::selection { background: #0095f640; color: #fff; }
+}
+
+@layer components {
+  /* ── Cards ── */
+  .glass-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .glass-card:hover { border-color: #333; }
+
+  .glass-card-glow {
+    background: #111;
+    border: 1px solid #9d4edd35;
+    border-radius: 16px;
+    box-shadow: 0 0 24px #9d4edd0c;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .glass-card-glow:hover { border-color: #9d4edd60; box-shadow: 0 0 32px #9d4edd18; }
+
+  /* ── Instagram Story Ring ── */
+  .story-ring {
+    border: 2.5px solid transparent;
+    background-image: linear-gradient(#000, #000),
+      linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+  .story-ring-blue {
+    border: 2px solid transparent;
+    background-image: linear-gradient(#000, #000),
+      linear-gradient(135deg, #0095f6, #00c6ff);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+
+  /* ── Post divider ── */
+  .ig-divider { height: 1px; background: #1a1a1a; }
+
+  /* ── Badges ── */
+  .clout-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium font-mono;
+    background: #a78bfa15; color: #a78bfa; border: 1px solid #a78bfa25;
+  }
+  .token-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium font-mono;
+    background: #00e5a015; color: #00e5a0; border: 1px solid #00e5a025;
+  }
+  .neon-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    background: linear-gradient(135deg, #9d4edd20, #f472b620);
+    border: 1px solid #9d4edd40; color: #f0f0ff;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200;
+    background: linear-gradient(135deg, #9d4edd, #f472b6);
+    color: white; box-shadow: 0 2px 12px #9d4edd25;
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* Instagram-style blue button */
+  .btn-ig {
+    @apply rounded-full font-semibold text-sm transition-all duration-150 px-5 py-1.5;
+    background: #0095f6; color: white;
+  }
+  .btn-ig:hover { background: #1aa3ff; }
+  .btn-ig:active { background: #0085e0; transform: scale(0.97); }
+
+  .btn-ig-sm {
+    @apply rounded-full font-semibold text-xs transition-all duration-150 px-3 py-1;
+    background: #0095f6; color: white;
+  }
+  .btn-ig-sm:hover { background: #1aa3ff; }
+
+  .btn-ig-outline {
+    @apply rounded-full font-semibold text-sm transition-all duration-150 px-5 py-1.5;
+    background: transparent; border: 1px solid #363636; color: #e0e0e0;
+  }
+  .btn-ig-outline:hover { background: #1a1a1a; }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200;
+    background: #1a1a1a; border: 1px solid #333; color: #e0e0e0;
+  }
+  .btn-secondary:hover { background: #222; border-color: #444; }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-colors text-text-muted;
+  }
+  .btn-ghost:hover { @apply text-text-primary bg-surface-raised; }
+
+  /* ── Inputs ── */
+  .input-field {
+    @apply w-full bg-surface-raised border border-border rounded-xl px-4 py-3 text-sm
+           text-text-primary placeholder-text-muted focus:outline-none transition-all duration-200;
+  }
+  .input-field:focus { border-color: #0095f650; box-shadow: 0 0 0 3px #0095f612; }
+
+  /* ── Trending cards ── */
+  .trending-card {
+    background: #111; border: 1px solid #222; border-radius: 20px;
+    transition: all 0.2s ease; overflow: hidden;
+  }
+  .trending-card:hover {
+    border-color: #f09433; box-shadow: 0 4px 20px #f0943318; transform: translateY(-2px);
+  }
+
+  /* ── Stat ticker ── */
+  .stat-ticker { @apply font-mono text-sm tabular-nums; }
+
+  /* ── Gradient text ── */
+  .gradient-text {
+    background: linear-gradient(135deg, #9d4edd, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .gradient-text-ig {
+    background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #bc1888);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .gradient-text-gold {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .gradient-text-green {
+    background: linear-gradient(135deg, #00e5a0, #00c88a);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* ── Dividers ── */
+  .neon-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #9d4edd30, #f472b630, transparent);
+  }
+
+  /* ── Tab ── */
+  .tab-active {
+    background: linear-gradient(135deg, #9d4edd25, #f472b615);
+    border: 1px solid #9d4edd30; color: #f0f0ff;
+  }
+
+  /* ── Avatar ring (legacy) ── */
+  .avatar-ring { box-shadow: 0 0 0 2px #000, 0 0 0 4px #9d4edd40; }
+
+  /* ── Glow text ── */
+  .text-glow-purple { text-shadow: 0 0 16px #9d4edd70; }
+  .text-glow-green  { text-shadow: 0 0 16px #00e5a070; }
+  .text-glow-pink   { text-shadow: 0 0 16px #f472b670; }
+
+  /* ── Media upload drop zone ── */
+  .upload-dropzone {
+    border: 2px dashed #333; border-radius: 16px;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .upload-dropzone:hover { border-color: #0095f6; background: #0095f608; }
+
+  /* ── Shimmer loading ── */
+  .shimmer-bg {
+    background: linear-gradient(90deg, #111 25%, #1c1c1c 50%, #111 75%);
+    background-size: 200% 100%; animation: shimmer 1.5s infinite;
+  }
+
+  /* ── Hot/Not ── */
+  .hot-gradient { background: linear-gradient(90deg, #f09433, #dc2743); }
+  .not-gradient { background: linear-gradient(90deg, #60a5fa, #818cf8); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes heartBeat {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.35); }
+  50%  { transform: scale(0.9); }
+  75%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-heartbeat  { animation: heartBeat 0.4s ease-in-out; }
+.animate-float      { animation: float 6s ease-in-out infinite; }
+.animate-fade-slide { animation: fadeSlideUp 0.25s ease-out forwards; }

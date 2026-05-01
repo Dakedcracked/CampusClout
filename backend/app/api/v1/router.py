@@ -1,0 +1,27 @@
+from fastapi import APIRouter
+from app.api.v1 import auth, economy, feed, alter_ego, ws, chat, store, global_chat, ai_companion, beauty, profiles, upload, clubs, ratings, search, notifications, rooms, admin, images, leaderboards, hot_profiles
+
+api_router = APIRouter()
+api_router.include_router(auth.router)
+api_router.include_router(economy.router)
+api_router.include_router(feed.router)
+api_router.include_router(alter_ego.router)
+api_router.include_router(chat.router)
+api_router.include_router(store.router)
+api_router.include_router(global_chat.router)
+api_router.include_router(ai_companion.router)
+api_router.include_router(beauty.router)
+api_router.include_router(profiles.router)
+api_router.include_router(upload.router)
+api_router.include_router(clubs.router)
+api_router.include_router(ws.router)
+api_router.include_router(ratings.router)
+api_router.include_router(search.router)
+api_router.include_router(notifications.router)
+api_router.include_router(rooms.router)
+api_router.include_router(admin.router)
+api_router.include_router(images.router)
+api_router.include_router(leaderboards.router)
+api_router.include_router(leaderboards.wallet_router)
+api_router.include_router(hot_profiles.router)
+

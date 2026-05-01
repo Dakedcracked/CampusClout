@@ -1,0 +1,17 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev --turbopack",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_API_URL": {
+      "description": "Backend API URL (set in Vercel dashboard)"
+    }
+  },
+  "regions": ["iad1"],
+  "functions": {
+    "src/app/**": {
+      "maxDuration": 30
+    }
+  }
+}
