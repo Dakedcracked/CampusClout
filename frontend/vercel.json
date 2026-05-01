@@ -5,7 +5,8 @@
   "framework": "nextjs",
   "env": {
     "NEXT_PUBLIC_API_URL": {
-      "description": "Backend API URL (set in Vercel dashboard)"
+      "description": "Backend API URL (set in Vercel dashboard)",
+      "default": "http://localhost:8000"
     }
   },
   "regions": ["iad1"],
