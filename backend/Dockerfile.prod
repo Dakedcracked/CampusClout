@@ -33,6 +33,7 @@ COPY --from=builder --chown=appuser:appuser /root/.local /app/.local
 
 # Set environment variables (use app user's .local)
 ENV PATH=/app/.local/bin:$PATH \
+    PYTHONPATH=/app/.local/lib/python3.11/site-packages:$PYTHONPATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
@@ -54,7 +55,7 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Run application with uvicorn
+# Run application with uvicorn using python -m for proper module resolution
 # Railway injects PORT env var, default to 8000 if not set
-# PATH includes /app/.local/bin where uvicorn is installed
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Using python -m ensures modules are properly resolved from PYTHONPATH
+CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
