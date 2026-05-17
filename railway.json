@@ -5,6 +5,7 @@
     "dockerfilePath": "backend/Dockerfile.prod"
   },
   "deploy": {
+    "startCommand": "/app/entrypoint.sh",
     "restartPolicyMaxRetries": 3,
     "restartPolicyWindowMs": 60000
   }
