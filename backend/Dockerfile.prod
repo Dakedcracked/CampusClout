@@ -46,6 +46,13 @@ COPY --chown=appuser:appuser backend/alembic.ini .
 RUN useradd -m -u 1000 -s /sbin/nologin appuser 2>/dev/null || true && \
     chown -R appuser:appuser /app
 
+# Create entrypoint script before switching user
+RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
+    echo 'PORT=${PORT:-8000}' >> /app/entrypoint.sh && \
+    echo 'exec python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT' >> /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh && \
+    chown appuser:appuser /app/entrypoint.sh
+
 USER appuser
 
 # Expose port (Railway injects PORT env var)
@@ -55,11 +62,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Run application with entrypoint script to handle PORT env var properly
-# Create entrypoint script that expands environment variables correctly
-RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
-    echo 'PORT=${PORT:-8000}' >> /app/entrypoint.sh && \
-    echo 'exec python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT' >> /app/entrypoint.sh && \
-    chmod +x /app/entrypoint.sh
-
+# Run with entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]
