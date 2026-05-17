@@ -54,6 +54,7 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Run application with gunicorn + uvicorn workers for production
+# Run application with uvicorn
 # Railway injects PORT env var, default to 8000 if not set
-CMD ["sh", "-c", "gunicorn --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile - --error-logfile - --log-level info app.main:app"]
+# PATH includes /app/.local/bin where uvicorn is installed
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
