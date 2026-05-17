@@ -57,13 +57,19 @@ export default function LoginPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.detail ?? "Login failed");
+        try {
+          const data = await res.json();
+          setError(data.detail ?? "Login failed");
+        } catch {
+          // If JSON parsing fails, it's likely a 500/504 error from Next.js proxy
+          setError(`Server Error (${res.status}): Please make sure NEXT_PUBLIC_API_URL is set in Vercel to your Railway backend URL.`);
+        }
         return;
       }
 
       router.push("/dashboard");
-    } catch {
+    } catch (err) {
+      console.error("Login catch error:", err);
       setError("Network error. Is the server running?");
     } finally {
       setLoading(false);
