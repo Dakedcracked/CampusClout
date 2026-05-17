@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "pythonVersion": "3.11",
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.py"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "sqlite+aiosqlite:///./app.db",
+    "DEBUG": "false",
+    "APP_NAME": "CampusClout"
+  }
+}

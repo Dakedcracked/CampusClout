@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker --version)",
+      "Bash(docker compose *)",
+      "Bash(pip3 --version)",
+      "Bash(python3 -m pip --version)",
+      "Bash(podman --version)",
+      "Bash(psql --version)",
+      "Bash(redis-cli --version)",
+      "Bash(yay --version)",
+      "Bash(pacman --version)",
+      "Bash(python3 -m venv .venv)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(python3 -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")",
+      "Bash(sed -i s/CHANGE_ME_IN_PRODUCTION/__TRACKED_VAR__/ /home/aditya/Desktop/Sau-statup/backend/.env)",
+      "Bash(sed -i \"s/DEBUG=true/DEBUG=true/\" /home/aditya/Desktop/Sau-statup/backend/.env)",
+      "Bash(.venv/bin/python -c ' *)"
+    ]
+  }
+}

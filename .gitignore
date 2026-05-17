@@ -1,0 +1,68 @@
+# Environment
+.env
+*.env.local
+*.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Docker volumes (local dev)
+postgres_data/
+redis_data/
+
+# OS
+.DS_Store
+*.swp
+
+# ==================== PRODUCTION SECRETS ====================
+.env
+.env.local
+.env.production
+.env.*.local
+secrets.txt
+*.pem
+*.key
+
+# ==================== DATABASE ====================
+*.db
+*.sqlite
+*.sqlite3
+app.db
+backend/app.db
+
+# ==================== UPLOADS & MEDIA ====================
+/backend/static/uploads/*
+!/backend/static/uploads/.gitkeep
+/frontend/public/uploads/*
+
+# ==================== LOGS ====================
+logs/
+*.log
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+backend/app.db

@@ -1,0 +1,58 @@
+# ==================== Production Dockerfile for Backend ====================
+# Multi-stage build for minimal image size
+# Supports: PostgreSQL, Redis, production configuration
+
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# ==================== Production Stage ====================
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install runtime dependencies only (not build tools)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy installed Python packages from builder
+COPY --from=builder /root/.local /root/.local
+
+# Set environment variables
+ENV PATH=/root/.local/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Copy application code
+COPY ./app ./app
+COPY ./migrations ./migrations
+COPY alembic.ini .
+
+# Create non-root user for security
+RUN useradd -m -u 1000 -s /sbin/nologin appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+# Expose port (Railway injects PORT env var)
+EXPOSE 8000
+
+# Health check for Docker and orchestration platforms
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+
+# Run application with gunicorn + uvicorn workers for production
+# Railway injects PORT env var, default to 8000 if not set
+CMD ["sh", "-c", "gunicorn --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile - --error-logfile - --log-level info app.main:app"]
