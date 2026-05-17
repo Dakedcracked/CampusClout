@@ -1,6 +1,7 @@
 # ==================== Production Dockerfile for Backend ====================
 # Multi-stage build for minimal image size
 # Supports: PostgreSQL, Redis, production configuration
+# Build context: repo root
 
 FROM python:3.11-slim as builder
 
@@ -13,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 # ==================== Production Stage ====================
@@ -35,10 +36,10 @@ ENV PATH=/root/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# Copy application code
-COPY ./app ./app
-COPY ./migrations ./migrations
-COPY alembic.ini .
+# Copy application code (from repo root context)
+COPY backend/app ./app
+COPY backend/migrations ./migrations
+COPY backend/alembic.ini .
 
 # Create non-root user for security
 RUN useradd -m -u 1000 -s /sbin/nologin appuser && \
