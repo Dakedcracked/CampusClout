@@ -5,7 +5,7 @@
     "dockerfilePath": "backend/Dockerfile.prod"
   },
   "deploy": {
-    "startCommand": "/app/entrypoint.sh",
+    "startCommand": "python -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
     "restartPolicyMaxRetries": 3,
     "restartPolicyWindowMs": 60000
   }
