@@ -34,20 +34,24 @@ RECENT_MESSAGE_COUNT = 5  # context window for Ollama
 async def _process_idle_threads() -> None:
     cutoff = datetime.now(timezone.utc) - IDLE_THRESHOLD
     async with AsyncSessionLocal() as db:
-        result = await db.execute(
-            select(ChatThread)
-            .where(
-                ChatThread.last_message_at < cutoff,
-                ChatThread.last_message_at.isnot(None),
-                (ChatThread.last_icebreaker_at.is_(None))
-                | (ChatThread.last_icebreaker_at < ChatThread.last_message_at),
+        try:
+            result = await db.execute(
+                select(ChatThread)
+                .where(
+                    ChatThread.last_message_at < cutoff,
+                    ChatThread.last_message_at.isnot(None),
+                    (ChatThread.last_icebreaker_at.is_(None))
+                    | (ChatThread.last_icebreaker_at < ChatThread.last_message_at),
+                )
+                .options(
+                    selectinload(ChatThread.user_a),
+                    selectinload(ChatThread.user_b),
+                )
             )
-            .options(
-                selectinload(ChatThread.user_a),
-                selectinload(ChatThread.user_b),
-            )
-        )
-        threads = result.scalars().all()
+            threads = result.scalars().all()
+        except Exception as e:
+            log.debug(f"Idle monitor: Database not ready yet ({type(e).__name__}). Retrying next interval.")
+            return
 
         for thread in threads:
             if not chat_manager.has_connections(str(thread.id)):

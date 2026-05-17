@@ -26,16 +26,21 @@ async def check_account_lockout(email: str, request: Request) -> None:
     if redis is None:
         return  # Graceful degradation if Redis is unavailable
     
-    lockout_key = f"lockout:{email.lower()}"
-    is_locked = await redis.exists(lockout_key)
-    
-    if is_locked:
-        ttl = await redis.ttl(lockout_key)
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Account temporarily locked due to too many failed login attempts. Try again in {ttl} seconds.",
-            headers={"Retry-After": str(ttl)},
-        )
+    try:
+        lockout_key = f"lockout:{email.lower()}"
+        is_locked = await redis.exists(lockout_key)
+        
+        if is_locked:
+            ttl = await redis.ttl(lockout_key)
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Account temporarily locked due to too many failed login attempts. Try again in {ttl} seconds.",
+                headers={"Retry-After": str(ttl)},
+            )
+    except HTTPException:
+        raise
+    except Exception:
+        return  # If Redis connection fails, allow request through
 
 
 async def record_failed_login(email: str, request: Request) -> None:
