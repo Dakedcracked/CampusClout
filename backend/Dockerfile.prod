@@ -38,7 +38,7 @@ ENV PATH=/root/.local/bin:$PATH \
 
 # Copy application code (from repo root context)
 COPY backend/app ./app
-COPY backend/migrations ./migrations
+COPY backend/alembic ./alembic
 COPY backend/alembic.ini .
 
 # Create non-root user for security
