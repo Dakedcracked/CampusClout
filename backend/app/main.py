@@ -64,10 +64,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.all_cors_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicit methods for production
-    allow_headers=["Content-Type", "Authorization"],  # Only necessary headers
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],  # Explicit methods for production
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],  # Only necessary headers
+    expose_headers=["Set-Cookie"],
     max_age=3600,  # Cache preflight for 1 hour
 )
 app.add_middleware(GZipMiddleware, minimum_size=1000)

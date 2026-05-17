@@ -97,13 +97,12 @@ def get_current_user_id(request: Request) -> str:
 
 
 def set_auth_cookies(response: Any, access_token: str, refresh_token: str) -> None:
-    secure = not settings.DEBUG
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=secure,
-        samesite="lax",
+        secure=settings.cookie_secure,
+        samesite=settings.cookie_samesite,
         max_age=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         path="/",
     )
@@ -111,13 +110,13 @@ def set_auth_cookies(response: Any, access_token: str, refresh_token: str) -> No
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=secure,
-        samesite="lax",
+        secure=settings.cookie_secure,
+        samesite=settings.cookie_samesite,
         max_age=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 24 * 3600,
-        path="/api/v1/auth/refresh",
+        path="/",  # Use root path so the cookie is sent on all routes via the Next.js proxy
     )
 
 
 def clear_auth_cookies(response: Any) -> None:
     response.delete_cookie("access_token", path="/")
-    response.delete_cookie("refresh_token", path="/api/v1/auth/refresh")
+    response.delete_cookie("refresh_token", path="/")
