@@ -28,21 +28,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy installed Python packages from builder
-COPY --from=builder /root/.local /root/.local
+# Copy installed Python packages from builder to app user's location
+COPY --from=builder --chown=appuser:appuser /root/.local /app/.local
 
-# Set environment variables
-ENV PATH=/root/.local/bin:$PATH \
+# Set environment variables (use app user's .local)
+ENV PATH=/app/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # Copy application code (from repo root context)
-COPY backend/app ./app
-COPY backend/alembic ./alembic
-COPY backend/alembic.ini .
+COPY --chown=appuser:appuser backend/app ./app
+COPY --chown=appuser:appuser backend/alembic ./alembic
+COPY --chown=appuser:appuser backend/alembic.ini .
 
 # Create non-root user for security
-RUN useradd -m -u 1000 -s /sbin/nologin appuser && \
+RUN useradd -m -u 1000 -s /sbin/nologin appuser 2>/dev/null || true && \
     chown -R appuser:appuser /app
 
 USER appuser
