@@ -24,6 +24,24 @@ from app.tasks.scheduler import setup_scheduler
 async def lifespan(app: FastAPI):
     idle_task = None
     scheduler = setup_scheduler()
+    
+    # Initialize database on startup
+    try:
+        from app.core.database import engine, Base
+        from app.models.user import User  # noqa
+        from app.models.social_feed import Post, Like, Comment  # noqa
+        from app.models.chat import ChatThread, ChatMessage  # noqa
+        from app.models.storefront import StorefrontProduct, Order  # noqa
+        from app.models.market_engine import MarketListing, Transaction  # noqa
+        from app.models.global_chat import GlobalChatMessage, GlobalChatThread  # noqa
+        from app.models.ai_companion import AICompanion, AIMessage  # noqa
+        
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        print("[STARTUP] ✅ Database tables initialized")
+    except Exception as e:
+        print(f"[STARTUP] ⚠️  Database initialization warning: {e}")
+    
     try:
         redis = await get_redis()
         app.state.redis = redis
