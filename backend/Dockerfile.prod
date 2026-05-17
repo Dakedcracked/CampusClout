@@ -57,5 +57,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Run application with uvicorn using python -m for proper module resolution
 # Railway injects PORT env var, default to 8000 if not set
-# Using python -m ensures modules are properly resolved from PYTHONPATH
-CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["/bin/bash", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
